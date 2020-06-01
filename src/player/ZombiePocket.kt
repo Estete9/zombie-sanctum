@@ -2,9 +2,9 @@ package player
 
 import zombies.Zombie
 
-var zombieArrayListPairs = arrayListOf<Pair<ZombiePocket, Zombie>>()
-//val zombiePocketInventory = mutableListOf<ZombiePocket>()
-//val zombieInventory = mutableListOf<Zombie>()
+
+val zombiePocketInventory = mutableListOf<ZombiePocket>()
+val zombieInventory = mutableListOf<Zombie>()
 
 data class ZombiePocket(var zombie: Zombie) {
     val petZombieName = zombie.name
@@ -14,29 +14,19 @@ data class ZombiePocket(var zombie: Zombie) {
 }
 
 fun addZombie(zombie: Zombie) {
-    zombieArrayListPairs.add(Pair(ZombiePocket(zombie), zombie))
-//    zombiePocketInventory.add(ZombiePocket(zombie))
-//    zombieInventory.add(zombie)
+    zombiePocketInventory.add(ZombiePocket(zombie))
+    zombieInventory.add(zombie)
 }
 
 
 fun retrieveZombie(zombieName: String): Zombie {
-
-
     var selectedZombieIndex = 0
+    for (element in zombiePocketInventory) {
+        if (element.petZombieName == zombieName) {
+            selectedZombieIndex = zombiePocketInventory.indexOf(element)
 
-    for (element in zombieArrayListPairs){
-        if(element.first.petZombieName == zombieName){
-            selectedZombieIndex = zombieArrayListPairs.indexOf(element)
         }
     }
-return zombieArrayListPairs[selectedZombieIndex].second
-//    for (element in zombiePocketInventory) {
-//        if (element.petZombieName == zombieName) {
-//            selectedZombieIndex = zombiePocketInventory.indexOf(element)
-//
-//        }
-//    }
-//
-//    return zombieInventory[selectedZombieIndex]
+
+    return zombieInventory[selectedZombieIndex]
 }
