@@ -116,30 +116,46 @@ class Player(name: String, hitPoints: Int = 30, strength: Int = 5) : Unit(name, 
                     "${element.first.petZombieName}, strength ${element.first.petZombieDamage}, hit points ${element
                         .first.petZombieHitPoints}"
                 )
-                var selectedPetZombie = retrieveZombie(readLine()!!)
-                println("${selectedPetZombie.name} has been selected")
+                var selectedPetZombiePair = retrieveZombie(readLine()!!)
+                println("${selectedPetZombiePair.second.name} has been selected")
 
-                when (selectedPetZombie) {
-                    in zombieInventory -> {
-                        petZombieBite(
-                            selectedPetZombie, zombie
-                        )
-                        if (zombie.hitPoints > 0 && petZombie != null) {
-                            petZombie.hitPoints = petZombie.hitPoints - zombie.zombieStrength
-                            println("${petZombie.name} was bit \nRemaining hit points ${petZombie.hitPoints}")
-                            println("what would you do? \npunch, run, pet or zombie bite?")
+                if (zombieArrayListPairs.contains(selectedPetZombiePair)) {
+                    petZombieBite(
+                        selectedPetZombiePair.second, zombie
+                    )
+                    if (zombie.hitPoints > 0 && petZombie != null) {
+                        petZombie.hitPoints = petZombie.hitPoints - zombie.zombieStrength
+                        println("${petZombie.name} was bit \nRemaining hit points ${petZombie.hitPoints}")
+                        println("what would you do? \npunch, run, pet or zombie bite?")
 //                            decision = readLine()!!
-                            makeDecision(player, petZombie, zombie, playerStrength)
-                        } else println("${zombie.name} is dead")
-                    }
-                    !in zombieInventory -> {
-                        println("you don't have that zombie. Who should attack?")
-                        selectedPetZombie = retrieveZombie(readLine()!!)
-                        petZombieBite(selectedPetZombie, zombie)
-                    }
-
-                    //                    selectedPetZombie.hitPoints <= 0 -> println("${zombie.name} is dead")
+                        makeDecision(player, petZombie, zombie, playerStrength)
+                    } else println("${zombie.name} is dead")
+                } else {
+                    println("you don't have that zombie. Who should attack?")
+                    selectedPetZombiePair = retrieveZombie(readLine()!!)
+                    petZombieBite(selectedPetZombiePair.second, zombie)
                 }
+//                when (zombieArrayListPairs.filter { it == selectedPetZombie }) {
+//                     -> {
+//                        petZombieBite(
+//                            selectedPetZombie, zombie
+//                        )
+//                        if (zombie.hitPoints > 0 && petZombie != null) {
+//                            petZombie.hitPoints = petZombie.hitPoints - zombie.zombieStrength
+//                            println("${petZombie.name} was bit \nRemaining hit points ${petZombie.hitPoints}")
+//                            println("what would you do? \npunch, run, pet or zombie bite?")
+////                            decision = readLine()!!
+//                            makeDecision(player, petZombie, zombie, playerStrength)
+//                        } else println("${zombie.name} is dead")
+//                    }
+//                    !in zombieInventory -> {
+//                        println("you don't have that zombie. Who should attack?")
+//                        selectedPetZombie = retrieveZombie(readLine()!!)
+//                        petZombieBite(selectedPetZombie, zombie)
+//                    }
+//
+//                    //                    selectedPetZombie.hitPoints <= 0 -> println("${zombie.name} is dead")
+//                }
 
 //                if (zombie.hitPoints == 0) println("${zombie.name} is dead") else zombieBite(selectedPetZombie, zombie)
 //                println("who should attack?")
@@ -209,7 +225,7 @@ private fun tameZombie(zombie: Zombie) {
 }
 
 fun openInventory() {
-    for (element in zombiePocketInventory) println(
-        "${element.petZombieName}, strength ${element.petZombieDamage}, hit points ${element.petZombieHitPoints}"
+    for (element in zombieArrayListPairs) println(
+        "${element.first.petZombieName}, strength ${element.first.petZombieDamage}, hit points ${element.first.petZombieHitPoints}"
     )
 }

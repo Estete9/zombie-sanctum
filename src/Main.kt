@@ -4,7 +4,7 @@ import zombies.FriendlyZombie
 import zombies.Zombie
 
 fun main() {
-    var selectedPetZombie: Zombie? = null
+    var selectedPetZombie: Pair<ZombiePocket, Zombie?>
 
 
     println("what's your name?")
@@ -27,7 +27,7 @@ fun main() {
     println("let's ask our new friend for help. \nChoose \"zombie bite\"")
 
     selectedPetZombie = retrieveZombie(pInput)
-    player.makeDecision(player, selectedPetZombie, zombie2, player.playerStrength)
+    player.makeDecision(player, selectedPetZombie.second, zombie2, player.playerStrength)
 
 }
 
