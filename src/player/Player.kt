@@ -112,8 +112,9 @@ class Player(name: String, hitPoints: Int = 30, strength: Int = 5) : Unit(name, 
             }
             "zombie bite" -> {
                 println("who should attack?")
-                for (element in zombiePocketInventory) println(
-                    "${element.petZombieName}, strength ${element.petZombieDamage}, hit points ${element.petZombieHitPoints}"
+                for (element in zombieArrayListPairs) println(
+                    "${element.first.petZombieName}, strength ${element.first.petZombieDamage}, hit points ${element
+                        .first.petZombieHitPoints}"
                 )
                 var selectedPetZombie = retrieveZombie(readLine()!!)
                 println("${selectedPetZombie.name} has been selected")
