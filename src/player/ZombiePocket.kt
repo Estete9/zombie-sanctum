@@ -20,7 +20,7 @@ fun addZombie(zombie: Zombie) {
 }
 
 
-fun retrieveZombie(zombieName: String): Zombie {
+fun retrieveZombie(zombieName: String): Pair<ZombiePocket, Zombie> {
 
 
     var selectedZombieIndex = 0
@@ -30,7 +30,7 @@ fun retrieveZombie(zombieName: String): Zombie {
             selectedZombieIndex = zombieArrayListPairs.indexOf(element)
         }
     }
-return zombieArrayListPairs[selectedZombieIndex].second
+return zombieArrayListPairs[selectedZombieIndex]
 //    for (element in zombiePocketInventory) {
 //        if (element.petZombieName == zombieName) {
 //            selectedZombieIndex = zombiePocketInventory.indexOf(element)
