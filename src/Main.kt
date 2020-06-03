@@ -3,6 +3,8 @@ import zombies.BasicZombie
 import zombies.FriendlyZombie
 import zombies.Zombie
 
+
+
 fun main() {
     var selectedPetZombie: Pair<ZombiePocket, Zombie?>
 
@@ -22,6 +24,7 @@ fun main() {
     println("Let's see your new friend")
     openInventory()
     println("Phew, that was close. \nhello ${player.name}")
+    println("Let's heal your new friend")
     println("oh here comes another one, get ready!")
 
     val zombie2 = BasicZombie()

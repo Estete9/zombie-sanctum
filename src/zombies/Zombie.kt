@@ -2,18 +2,55 @@ package zombies
 
 import player.Player
 
-abstract class Zombie : ZombieBite {
+abstract class Zombie : ZombieBite, Eat {
     abstract val name: String
     abstract val type: String
     abstract var hitPoints: Int
-    abstract var zombieStrength: Int
-    var tamed = false
+    abstract val baseHitPoints: Int
+    abstract var zombieStrength: Double
     abstract val baseTamable: Double
     abstract var changingTamable: Double
+    abstract var condition: String
+    var tamed = false
 
+    override fun bite(zDamage: Double, objective: Player) {
+        objective.hitPoints = (objective.hitPoints - zombieStrength).toInt()
+    }
 
-    override fun bite(zDamage: Int, objective: Player) {
-        objective.hitPoints = objective.hitPoints - zombieStrength
+    override fun useItem(item: String, decision: String, zombie: Zombie) {
+        var turn = 0
+
+        if (decision.isNotEmpty()) {
+            when {
+                turn < 3 -> when (item) {
+                    "meat" -> zombie.hitPoints = zombie.baseHitPoints
+                    "rabies" -> {
+                        condition = "angry"
+                        while (condition == "angry") zombie.zombieStrength *= 1.5
+                        turn += 1
+                    }
+                }
+                turn > 2 -> {
+                    println("$condition dissipated")
+                    turn = 0
+                }
+
+            }
+//            if (turn < 3) {
+////                when (item) {
+////                    "meat" -> zombie.hitPoints = zombie.baseHitPoints
+////                    "rabies" -> {
+////                        condition = "angry"
+////                        while (condition == "angry") zombie.zombieStrength *= 1.5
+////                        turn += 1
+////                    }
+////                }
+//            } else {
+////                turn = 0
+////                println("$condition dissipated")
+//            }
+
+        }
     }
 
 }
@@ -22,7 +59,9 @@ class BasicZombie : Zombie() {
     override val type = "normal"
     override val name = "$type zombie"
     override var hitPoints = 10
-    override var zombieStrength = 2
+    override var condition = ""
+    override val baseHitPoints = hitPoints
+    override var zombieStrength = 2.0
     override var baseTamable: Double = 3.0
     override var changingTamable = baseTamable
 
@@ -32,14 +71,21 @@ class FriendlyZombie : Zombie() {
     override val type = "friendly"
     override val name = "$type zombie"
     override var hitPoints = 8
-    override var zombieStrength = 4
+    override var condition = ""
+    override var zombieStrength = 4.0
     override var baseTamable: Double = 2.0
+    override val baseHitPoints = hitPoints
     override var changingTamable = baseTamable
 }
 
 interface ZombieBite {
-    fun bite(zDamage: Int, objective: Player) {
+    fun bite(zDamage: Double, objective: Player) {
 
     }
 }
 
+interface Eat {
+    fun useItem(item: String, decision: String, zombie: Zombie) {
+
+    }
+}
