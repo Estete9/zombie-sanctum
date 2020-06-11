@@ -1,8 +1,9 @@
 package zombies
 
+import inventory.BaseItem
 import player.Player
 
-abstract class Zombie : ZombieBite, Eat {
+abstract class Zombie : ZombieBite, UseItem {
     abstract val name: String
     abstract val type: String
     abstract var hitPoints: Int
@@ -17,15 +18,15 @@ abstract class Zombie : ZombieBite, Eat {
         objective.hitPoints = (objective.hitPoints - zombieStrength).toInt()
     }
 
-    override fun useItem(item: String, decision: String, zombie: Zombie) {
+    override fun useItem(item: BaseItem, decision: String, zombie: Zombie) {
         var turn = 0
 
         if (decision.isNotEmpty()) {
             when {
-                turn < 3 -> when (item) {
-                    "meat" -> zombie.hitPoints = zombie.baseHitPoints
+                turn < 3 -> when (item.itemName) {
+                    "meat" -> zombie.hitPoints += item.healthModifier!!
                     "rabies" -> {
-                        condition = "angry"
+                        condition = item.statusModifier!!
                         while (condition == "angry") zombie.zombieStrength *= 1.5
                         turn += 1
                     }
@@ -59,7 +60,7 @@ class BasicZombie : Zombie() {
     override val type = "normal"
     override val name = "$type zombie"
     override var hitPoints = 10
-    override var condition = ""
+    override var condition = "normal"
     override val baseHitPoints = hitPoints
     override var zombieStrength = 2.0
     override var baseTamable: Double = 3.0
@@ -71,7 +72,7 @@ class FriendlyZombie : Zombie() {
     override val type = "friendly"
     override val name = "$type zombie"
     override var hitPoints = 8
-    override var condition = ""
+    override var condition = "normal"
     override var zombieStrength = 4.0
     override var baseTamable: Double = 2.0
     override val baseHitPoints = hitPoints
@@ -84,8 +85,8 @@ interface ZombieBite {
     }
 }
 
-interface Eat {
-    fun useItem(item: String, decision: String, zombie: Zombie) {
+interface UseItem {
+    fun useItem(item: BaseItem, decision: String, zombie: Zombie) {
 
     }
 }

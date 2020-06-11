@@ -1,3 +1,5 @@
+import inventory.Meat
+import inventory.itemToInventory
 import player.*
 import zombies.BasicZombie
 import zombies.FriendlyZombie
@@ -18,14 +20,18 @@ fun main() {
     val zombie1 = FriendlyZombie()
     println("\n${zombie1.name} has appeared! \n${zombie1.hitPoints} hit points, tamable ${zombie1.changingTamable}")
 
-    println("what would you do? \npunch, run or pet?")
+    println("let's \"punch\" it!")
     player.makeBattleDecision(player, null, zombie1, player.unitStrength)
 
     println("Let's see your new friend")
-    openInventory()
+    openZombieInventory()
     println("Phew, that was close. \nhello ${player.name}")
-    println("Let's heal your new friend")
-    println("oh here comes another one, get ready!")
+    println("Let's heal your new friend, take this")
+    itemToInventory(Meat())
+    println("you got some \"meat\"")
+    println("Let's open your \"inventory\"")
+    player.makeDecision()
+    println("\nhere comes another one, get ready!")
 
     val zombie2 = BasicZombie()
     println("\n${zombie2.name} has appeared! \n${zombie2.hitPoints} hit points")

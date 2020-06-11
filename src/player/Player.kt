@@ -1,13 +1,15 @@
 package player
 
-//import punch
+import inventory.*
 import zombies.Zombie
 import java.util.*
 
-var isTutorial = true
+object Tutorial {
+    var isTutorial = true
+}
 
-sealed class Unit(val name: String, var hitPoints: Int = 30, var unitStrength: Int = 5) {
-//    open fun makeDecision(
+sealed class Unit(val name: String, var hitPoints: Int = 30, var unitStrength: Int) {
+    //    open fun makeDecision(
 //        player: Player,
 //        petZombie: Zombie?
 //    ) {
@@ -15,6 +17,9 @@ sealed class Unit(val name: String, var hitPoints: Int = 30, var unitStrength: I
 //
 //        }
 //    }
+
+
+    open fun makeDecision() {}
 
     open fun makeBattleDecision(
         player: Player,
@@ -70,8 +75,64 @@ sealed class Unit(val name: String, var hitPoints: Int = 30, var unitStrength: I
 
 }
 
-class Player(name: String, hitPoints: Int = 30, playerStrength: Int = 3) : Unit(name, hitPoints, playerStrength) {
+class Player(name: String, hitPoints: Int = 30, playerStrength: Int = 3) : Unit(name, hitPoints, playerStrength),
+    UseItem, ChooseItem {
 
+
+    override fun makeDecision() {
+        when (readLine()!!) {
+            "zombies" -> openZombieInventory()
+            "inventory" -> {
+                openInventory()
+                chooseItem()
+            }
+            "open inventory" -> {
+                openInventory()
+                chooseItem()
+            }
+        }
+    }
+
+    override fun chooseItem() {
+        println("what item will you use?")
+        when (val decision = readLine()!!) {
+            "meat" -> if (zombieArrayListPairs.isEmpty()) {
+
+                println("You don't have any zombies left")
+                chooseItem()
+
+            } else {
+                val item = retrieveItem(decision)
+                if (item in itemList) {
+                    println("who should use ${item.itemName}?")
+                    for (element in zombieArrayListPairs) println(
+                        "${element.first.petZombieName}, strength ${element.first.petZombieDamage}, hit points ${element
+                            .first.petZombieHitPoints}/${element.second.baseHitPoints}"
+                    )
+                    println("choose a zombie")
+                    val selectedPetZombiePair = retrieveZombie(readLine()!!)
+
+                    if (selectedPetZombiePair in zombieArrayListPairs) {
+                        println("${selectedPetZombiePair.second.name} has been selected")
+                        Meat().useItem(item, selectedPetZombiePair.second)
+                        itemList.remove(item)
+                    } else {
+                        println("you don't have that zombie. Select a valid zombie")
+                        chooseItem()
+                    }
+                } else {
+                    println("you don't have any ${item.itemName}")
+                    chooseItem()
+                }
+
+            }
+            else -> {
+                println("that item doesn't exist, try again")
+                chooseItem()
+            }
+        }
+
+    }
 
     override fun makeBattleDecision(
         player: Player,
@@ -95,13 +156,21 @@ class Player(name: String, hitPoints: Int = 30, playerStrength: Int = 3) : Unit(
                     println("${zombie.name} bit you! \nouch")
                     println("Remaining hit points ${player.hitPoints}")
 
-                    if (isTutorial && zombie.hitPoints in 1..2) {
-                        println("Now! he is weak and not angry anymore!\nLet's pet it!")
-                        makeBattleDecision(player, petZombie, zombie, playerStrength)
-                    } else {
-                        println("what would you do?\npunch, run or pet?")
-                        makeBattleDecision(player, petZombie, zombie, playerStrength)
+                    when {
+                        (Tutorial.isTutorial && zombie.hitPoints > 2) -> {
+                            println("let's punch it again")
+                            makeBattleDecision(player, petZombie, zombie, playerStrength)
+                        }
+                        (Tutorial.isTutorial && zombie.hitPoints in 1..2) -> {
+                            println("Now! he is weak and less angry anymore!\nLet's \"pet\" it!")
+                            makeBattleDecision(player, petZombie, zombie, playerStrength)
+                        }
+                        else -> {
+                            println("what would you do?\npunch, run or pet?")
+                            makeBattleDecision(player, petZombie, zombie, playerStrength)
+                        }
                     }
+
 
                 } else println("${zombie.name} lost all his hit points.\n${zombie.name} is dead")
 
@@ -139,6 +208,7 @@ class Player(name: String, hitPoints: Int = 30, playerStrength: Int = 3) : Unit(
                         "${element.first.petZombieName}, strength ${element.first.petZombieDamage}, hit points ${element
                             .first.petZombieHitPoints}"
                     )
+                    println("choose a zombie")
                     var selectedPetZombiePair = retrieveZombie(readLine()!!)
                     println("${selectedPetZombiePair.second.name} has been selected")
                     if (zombieArrayListPairs.contains(selectedPetZombiePair)) {
@@ -168,17 +238,12 @@ class Player(name: String, hitPoints: Int = 30, playerStrength: Int = 3) : Unit(
                 }
             }
             else -> {
-                println("please make a good decision")
+                println("please make a correct decision")
                 makeBattleDecision(player, petZombie, zombie, playerStrength)
             }
         }
     }
 
-//    fun makeDecision() {
-//    when(readLine()!!){
-//
-//    }
-//    }
 
 }
 
@@ -236,8 +301,12 @@ private fun tameZombie(zombie: Zombie) {
     if (tameNumber >= zombie.changingTamable) zombie.tamed = true
 }
 
-fun openInventory() {
+
+fun openZombieInventory() {
     for (element in zombieArrayListPairs) println(
         "${element.first.petZombieName}, strength ${element.first.petZombieDamage}, hit points ${element.first.petZombieHitPoints}"
     )
+}
+interface ChooseItem {
+    fun chooseItem() {}
 }
